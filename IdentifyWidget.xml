@@ -15,7 +15,7 @@
 	<infoautoclosemilliseconds>2000</infoautoclosemilliseconds><!-- 2 seconds -->
 	<autoactivatedtool>mappoint</autoactivatedtool><!-- possible values are extent or polygon or mappoint or polyline or nothing -->
 	<excludebasemaps>true</excludebasemaps>
-	<disablepopuplinks>false</disablepopuplinks>
+	<disablepopuplinks>true</disablepopuplinks>
 	<labels>
 		<zoom2message>Click to Zoom to Point</zoom2message>
 		<identifylabel>Identify</identifylabel>

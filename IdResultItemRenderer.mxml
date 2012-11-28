@@ -166,7 +166,7 @@
 				  right="15" useHandCursor="true" buttonMode="true"
 				  click="deleteResult(event)"
 				  toolTip="{removeResult}"
-				  source="widgets/identify/assets/images/i_remove_info.png"
+				  source="widgets/Identify/assets/images/i_remove_info.png"
 				  verticalCenter="0"/>
 	</s:HGroup>
 </s:ItemRenderer>

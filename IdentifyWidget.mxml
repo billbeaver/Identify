@@ -38,13 +38,13 @@
 	</viewer:transitions>
 	<fx:Script>
 		<![CDATA[
-			
 			import com.esri.ags.FeatureSet;
 			import com.esri.ags.Graphic;
 			import com.esri.ags.Map;
 			import com.esri.ags.SpatialReference;
 			import com.esri.ags.TimeExtent;
 			import com.esri.ags.events.DrawEvent;
+			import com.esri.ags.events.ExtentEvent;
 			import com.esri.ags.events.GeometryServiceEvent;
 			import com.esri.ags.events.IdentifyEvent;
 			import com.esri.ags.geometry.Extent;
@@ -79,6 +79,8 @@
 			import com.esri.ags.utils.JSONUtil;
 			import com.esri.viewer.AppEvent;
 			import com.esri.viewer.ViewerContainer;
+			
+			import flash.filters.GlowFilter;
 			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
@@ -162,6 +164,10 @@
 			
 			private var identFillSymbol:Symbol;
 			
+			private var glowLineSymbol:Symbol;
+			
+			private var glowFillSymbol:Symbol;
+			
 			private var identPicSymbol:Symbol;
 			
 			private var identifyGeom:Geometry;
@@ -202,9 +208,21 @@
 			
 			private var DisablePopUpLinks:Boolean;
 			
+			private var numServicesIdent:int;
+			
 			private var dateFormatter:DateFormatter = new DateFormatter();
 			private var numFormatter:NumberFormatter = new NumberFormatter();
 			private var currFormatter:CurrencyFormatter = new CurrencyFormatter();
+			
+			private var gf:flash.filters.GlowFilter;
+			
+			//Build Constants
+			protected const VERSION:String = "3.0.2";
+			protected const BUILDDATE:String = "11/28/2012";
+			
+			//Resources
+			[Embed(source="assets/images/i_about.png")]
+			private var iconClass:Class;
 			
 			private function init():void
 			{
@@ -358,6 +376,7 @@
 				const identLineSymbolAlpha:Number = (configXML.symbols.simplelinesymbol.@alpha[0] != null) ? configXML.symbols.simplelinesymbol.@alpha : 0.8;
 				const identLineSymbolWidth:Number = (configXML.symbols.simplelinesymbol.@width[0] != null) ? configXML.symbols.simplelinesymbol.@width : 2;
 				identLineSymbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, identLineSymbolColor, identLineSymbolAlpha, identLineSymbolWidth);
+				glowLineSymbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, identLineSymbolColor, 0.9, (identLineSymbolWidth + (identLineSymbolWidth / 2)));
 				
 				// fill symbol
 				const identFillSymbolColor:uint = (configXML.symbols.simplefillsymbol.@color[0] != null) ? configXML.symbols.simplefillsymbol.@color : 0x448ccb;
@@ -366,6 +385,7 @@
 				const identFillSymbolOutlineAlpha:Number = (configXML.symbols.simplefillsymbol.outline.@alpha[0] != null) ? configXML.symbols.simplefillsymbol.outline.@alpha : 0.8;
 				const identFillSymbolOutlineWidth:Number = (configXML.symbols.simplefillsymbol.outline.@width[0] != null) ? configXML.symbols.simplefillsymbol.outline.@width : 2;
 				identFillSymbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, identFillSymbolColor, identFillSymbolAlpha, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, identFillSymbolOutlineColor, identFillSymbolOutlineAlpha, identFillSymbolOutlineWidth));
+				glowFillSymbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, identFillSymbolColor, 0.9, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, identFillSymbolOutlineColor, 0.9, identFillSymbolOutlineWidth));
 				
 				graphicsLayer = new GraphicsLayer();
 				graphicsLayer.symbol = identPicSymbol;
@@ -374,11 +394,34 @@
 				
 				wTemplate.addTitlebarButton(ICON_URL + "i_info.png", identifyLabel, showStateIdentify);
 				wTemplate.addTitlebarButton(ICON_URL + "i_table.png", resultsLabel, showStateResults);
+				wTemplate.header.addEventListener(MouseEvent.CLICK, DisplayVersion);
 				AppEvent.addListener(AppEvent.DATA_PUBLISH, sharedDataUpdated);
 				if (autoActivatedTool != "" ){
 					activateIdentifyTool(null, autoActivatedTool);
 				};
+				
+				function getGlowColor():uint
+				{
+					var retClr:uint = 0x448ccb;
+					if(identMarkerSymbolColor){
+						retClr = identMarkerSymbolColor;
+					}
+					if(identLineSymbolColor){
+						retClr = identLineSymbolColor;
+					}
+					if(identFillSymbolColor){
+						retClr = identFillSymbolColor;
+					}
+					return retClr;
+				}
+				gf = new flash.filters.GlowFilter;
+				gf.color = getGlowColor();
+				gf.alpha = 1;
+				gf.strength = 2;
+				gf.blurX = 8;
+				gf.blurY = 8;
 			}
+			
 			
 			protected function determineDropDownWidth(arr:Object):Number
 			{
@@ -525,6 +568,7 @@
 			//identify features
 			private function identifyFeatures(geom:Geometry):void
 			{
+				numServicesIdent = 0;
 				var arcL:*;
 				resultFound = false;
 				var identifyParams:IdentifyParameters = new IdentifyParameters();
@@ -534,7 +578,6 @@
 				identifyParams.width = map.width;
 				identifyParams.height = map.height;
 				identifyParams.mapExtent = map.extent;
-				//identifyParams.spatialReference = map.spatialReference;
 				if (useMapTime && map.timeExtent != null){
 					identifyParams.timeExtent = new TimeExtent(map.timeExtent.endTime, map.timeExtent.endTime);
 				};
@@ -584,8 +627,11 @@
 								if(arcL.visibleLayers){
 									identifyParams.layerIds = getActualVisibleLayers(arcL.visibleLayers.toArray(), arcL.layerInfos.slice());
 									identifyParams.layerOption = "all";
+									if(identifyParams.layerIds.length == 0){
+										url="";
+									}
 								};
-							}	;
+							};
 						};
 					}else if (layer is ArcGISTiledMapServiceLayer){
 						var tiledLayer:ArcGISTiledMapServiceLayer = layer as ArcGISTiledMapServiceLayer;
@@ -626,6 +672,7 @@
 					};
 					
 					if(url){
+						numServicesIdent++;
 						if(betaReturnGeometryFix){
 							var visString:String = "";
 							if(identifyParams.layerIds){
@@ -637,7 +684,7 @@
 									visString += identifyParams.layerIds[v].toString();
 								};
 							};
-							var cIdURL:String; //= url + "/identify" + idURL + identifyLayerOption + visString + idURL2;
+							var cIdURL:String;
 							if (identifyParams.layerOption){
 								cIdURL = url + "/identify" + idURL + identifyParams.layerOption + visString + idURL2;
 							}else{
@@ -738,6 +785,7 @@
 			
 			private function onResult(identifyResults:Array, arcL:* = null):void                
 			{
+				numServicesIdent--;
 				//if top is chosen and a result is already forund than bail out of all other returns.
 				if(identifyLayerOption == "top" && resultFound){
 					return;
@@ -747,6 +795,7 @@
 				};
 				
 				for each (var identifyResult:IdentifyResult in identifyResults){
+					trace(ObjectUtil.toString(identifyResult));
 					var excludeLayer:Boolean = false;
 					for (var el:int=0; el < excludeLayers.length; el++){
 						if (identifyResult.layerName == excludeLayers[el]){
@@ -785,10 +834,6 @@
 							break;
 						};
 					};
-					
-					var isThisLayerVisible:Boolean = true;
-					var _maxScale:Number = 0;
-					var _minScale:Number = 0;
 					
 					if(arcL){
 						if(checkIfLayerVisible(arcL, identifyResult.layerId)){
@@ -1052,7 +1097,6 @@
 							link: link
 						};
 						iGra.attributes = Atts;
-						//iGra.attributes = idResult;
 						var popUpInfo : PopUpInfo = new PopUpInfo();
 						popUpInfo.title = "{title}";
 						popUpInfo.description = "{content}";
@@ -1122,7 +1166,6 @@
 								link: link
 							};
 							iGra2.attributes = Atts2;
-							//iGra2.attributes = idResult;
 							if(returnGeomForZoom){
 								graphicsLayer.add(iGra2);
 							};
@@ -1136,12 +1179,15 @@
 						}
 					};
 				}
-				if(identifyArrayCollection.length == 0){
+				if(identifyArrayCollection.length == 0 && numServicesIdent <= 0){
 					showMessage(noResultsFoundLbl, false);
-				}else{
+					timedClose2();
+				}else if(identifyArrayCollection.length > 0 && numServicesIdent <= 0){
 					showMessage(resultsFoundLbl + " " + identifyArrayCollection.length, false);
+					timedClose2();
+				}else{
+					showMessage(loadingLabel + " layers remaining: " + numServicesIdent, true);
 				};
-				timedClose2();
 			}
 			
 			private function getResultByGID(gid:Number):IdResult
@@ -1191,7 +1237,6 @@
 			private function timerTick2(event:TimerEvent):void
 			{
 				stopTimer2();
-				clearMessage();
 				if(identifyArrayCollection.length == 0){
 					showStateIdentify();
 				};
@@ -1228,6 +1273,9 @@
 				if(arcL){
 					var liArr:Array = arcL.layerInfos;
 					var li:LayerInfo = findInCollection(liArr, findId(lid));
+					if(!li){
+						return false;
+					}
 					maxScale = li.maxScale;
 					minScale = li.minScale;
 					
@@ -1276,22 +1324,34 @@
 				};
 			}
 			
+			private function applyGlowSymbolorFilter(gra:Graphic):void
+			{
+				if(gra.geometry.type == Geometry.MAPPOINT || gra.geometry.type == Geometry.MULTIPOINT){
+					gra.filters = [gf];
+				}else if(gra.geometry.type == Geometry.POLYLINE){
+					gra.symbol = glowLineSymbol;
+				}else if(gra.geometry.type == Geometry.POLYGON || gra.geometry.type == Geometry.EXTENT){
+					gra.symbol = glowFillSymbol;
+				}
+			}
+			
+			private function removeGlowSymbolorFilter(gra:Graphic):void
+			{
+				if(gra.geometry.type == Geometry.MAPPOINT || gra.geometry.type == Geometry.MULTIPOINT){
+					gra.filters = null;
+				}else if(gra.geometry.type == Geometry.POLYLINE){
+					gra.symbol = identLineSymbol;
+				}else if(gra.geometry.type == Geometry.POLYGON || gra.geometry.type == Geometry.EXTENT){
+					gra.symbol = identFillSymbol;
+				}
+			}
+			
 			//mouse over graphic
 			private function mouseOverGraphic(event:MouseEvent):void
 			{
 				stopTimer();
 				var gra:Graphic = event.currentTarget as Graphic;
-				
-				var gf:spark.filters.GlowFilter = new spark.filters.GlowFilter();
-				gf.color = (identMarkerSymbol)?(identMarkerSymbol as SimpleMarkerSymbol).color : (identLineSymbol)?(identLineSymbol as SimpleLineSymbol).color : (identFillSymbol)?(identFillSymbol as SimpleFillSymbol).color : 0x448ccb;
-				gf.alpha = 1;
-				gf.strength = 2;
-				gf.blurX = 8;
-				gf.blurY = 8;
-				var iG:Number = (graphicsLayer.graphicProvider as ArrayCollection).getItemIndex(gra);
-				if(iG > -1){
-					(graphicsLayer.graphicProvider as ArrayCollection).getItemAt(iG).filters = [gf];
-				};
+				applyGlowSymbolorFilter(gra);
 				
 				if (map.infoWindow.visible && map.infoWindow.contentOwner &&
 					((map.infoWindow.contentOwner is Graphic && map.infoWindow.contentOwner === gra) || map.infoWindow.contentOwner is Map)){
@@ -1304,16 +1364,13 @@
 					hitimer = setTimeout(showHighlight, 300, [idResult]);
 				}else{
 					hideInfoWindow();
-				};
+				}; 
 			}
 			
 			private function mouseOutGraphic(event:MouseEvent):void
 			{
 				var gra:Graphic = event.currentTarget as Graphic;
-				var iG:Number = (graphicsLayer.graphicProvider as ArrayCollection).getItemIndex(gra);
-				if(iG > -1){
-					(graphicsLayer.graphicProvider as ArrayCollection).getItemAt(iG).filters = [];
-				};
+				removeGlowSymbolorFilter(gra);
 				timedClose();
 				clearSelectedGrapics(null);
 			}
@@ -1335,18 +1392,13 @@
 			{
 				var idResult:IdResult = ItemRenderer(event.target).data as IdResult;
 				stopTimer();
+				
 				if(idResult.graphic){
-					var gf:spark.filters.GlowFilter = new spark.filters.GlowFilter();
-					gf.color = (identMarkerSymbol)?(identMarkerSymbol as SimpleMarkerSymbol).color : (identLineSymbol)?(identLineSymbol as SimpleLineSymbol).color : (identFillSymbol)?(identFillSymbol as SimpleFillSymbol).color : 0x448ccb;
-					gf.alpha = 1;
-					gf.strength = 2;
-					gf.blurX = 8;
-					gf.blurY = 8;
 					var iG:Number = (graphicsLayer.graphicProvider as ArrayCollection).getItemIndex(idResult.graphic);
 					if(iG > -1){
-						(graphicsLayer.graphicProvider as ArrayCollection).getItemAt(iG).filters = [gf];
+						applyGlowSymbolorFilter((graphicsLayer.graphicProvider as ArrayCollection).getItemAt(iG) as Graphic);
 					};
-				};
+				};  
 				clearTimeout(hitimer);
 				if (map.extent.containsXY(idResult.point.x, idResult.point.y)){
 					if(enableMoverRec){
@@ -1363,9 +1415,9 @@
 				if(idResult.graphic){
 					var iG:Number = (graphicsLayer.graphicProvider as ArrayCollection).getItemIndex(idResult.graphic);
 					if(iG > -1){
-						(graphicsLayer.graphicProvider as ArrayCollection).getItemAt(iG).filters = [];
-					};
-				};
+						removeGlowSymbolorFilter((graphicsLayer.graphicProvider as ArrayCollection).getItemAt(iG) as Graphic);
+					} 
+				}
 				clearTimeout(hitimer);
 				hitimer = setTimeout(timedClose, 100);
 			}
@@ -1410,14 +1462,16 @@
 			
 			private function clearSelectedGrapics(evt:Event):void
 			{
-				for (var i:int = 0; i < graphicsLayer.numGraphics; ){
-					if (Graphic(graphicsLayer.getChildAt(i)).name == "Selected"){
-						graphicsLayer.remove(Graphic(graphicsLayer.getChildAt(i)));
-						break;
-					}else{
-						i++;
+				if(!returnGeomForZoom){
+					for (var i:int = 0; i < graphicsLayer.numGraphics; ){
+						if (Graphic(graphicsLayer.getChildAt(i)).name == "Selected"){
+							graphicsLayer.remove(Graphic(graphicsLayer.getChildAt(i)));
+							break;
+						}else{
+							i++;
+						};
 					};
-				};
+				}
 			}
 			
 			private function clickRecord(event:Event):void
@@ -1676,9 +1730,23 @@
 				identifyArrayCollection.removeItemAt(identifyArrayCollection.getItemIndex(idResult));
 				identifyArrayCollection.refresh();
 				graphicsLayer.remove(idResult.graphic);
+				showMessage(resultsFoundLbl + " " + identifyArrayCollection.length, false);
 				if(identifyArrayCollection.length == 0){
+					clearMessage();
 					showStateIdentify();
 				};
+			}
+			
+			/*
+			* Display the current version and build date of the eSearch Widget when holding the ALT key
+			* and clcicking on the widget title
+			*/
+			private function DisplayVersion(evt:MouseEvent):void
+			{
+				if(evt.altKey){
+					Alert.show("Identify Widget Version: " + VERSION + "\nBuild Date: " + BUILDDATE, 
+						wTemplate.widgetTitle, 4, null, null, iconClass);
+				}
 			}
 		]]>
 	</fx:Script>
@@ -1776,18 +1844,12 @@
 				<s:Label id="txtMessage"
 						 text=""
 						 width="90%"/>
-			</s:HGroup>
-			<s:HGroup width="100%"
-					  horizontalAlign="right"
-					  paddingRight="10"
-					  paddingTop="2"
-					  paddingBottom="2"
-					  includeInLayout="{idResultDG.dataProvider.length > 0}"
-					  visible="{idResultDG.dataProvider.length > 0}">
-				<s:Label buttonMode="true"
+				<s:Label buttonMode="true" textAlign="right"
 						 click="clear()"
 						 fontWeight="bold"
 						 text="{clearLabel}"
+						 visible="{idResultDG.dataProvider.length &gt; 0}"
+						 includeInLayout="{idResultDG.dataProvider.length &gt; 0}"
 						 textDecoration="underline"/>
 			</s:HGroup>
 			<s:Scroller width="100%" height="100%">

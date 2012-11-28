@@ -1,5 +1,9 @@
 This is my identify widget for FlexViewer 3.0
 
+* 3.0.2 - Fixed the Gray Circle Of Death (GCOD) people were seeing beacuse of the glowfilter
+	  being applied to graphics not completely in the map extent.
+	- Fixed the identifying features message to more accurately report the identify progress.
+
 * 3.0.1 - Added a dropdown to choose which configured layer to identify or just all layers
         - Added a remove button to each result, so that you can remove unwanted results from the list
 	- Added tag excludelayer to the IdentifyWidget.xml that allows you to specify a layer that you do not
