@@ -186,8 +186,6 @@
 			
 			private var popUpRenderer:PopUpRenderer = new PopUpRenderer();
 			
-			private var betaReturnGeometryFix:Boolean;
-			
 			[Bindable] private var autoActivatedTool:String;
 			
 			private var drawSymbol:Symbol;
@@ -259,7 +257,6 @@
 					identifyLayerOption = configXML.identifylayeroption || IdentifyParameters.LAYER_OPTION_VISIBLE;
 					returnGeomForZoom = configXML.returngeometryforzoom && configXML.returngeometryforzoom == "true";
 					autoActivatedTool = configXML.autoactivatedtool || "";
-					betaReturnGeometryFix = configXML.betareturngeometryfix && configXML.betareturngeometryfix == "true";
 					DisablePopUpLinks =  configXML.disablepopuplinks && configXML.disablepopuplinks == "true";
 					if (Number(configXML.identifytolerance) > 0){
 						identifyTolerance = Number(configXML.identifytolerance);
@@ -491,22 +488,22 @@
 				switch (value){
 					case DrawTool.MAPPOINT:{
 						status = pointLabel;
-						setMapAction(DrawTool.MAPPOINT, status, identMarkerSymbol, drawEnd, false, true);
+						setMapAction(DrawTool.MAPPOINT, status, identMarkerSymbol, drawEnd, null, false, true);
 						break;
 					};
 					case DrawTool.POLYLINE:{
 						status = lineLabel;
-						setMapAction(DrawTool.POLYLINE, status, identLineSymbol, drawEnd, false, true);
+						setMapAction(DrawTool.POLYLINE, status, identLineSymbol, drawEnd, null, false, true);
 						break;
 					};
 					case DrawTool.EXTENT:{
 						status = rectLabel;
-						setMapAction(DrawTool.EXTENT, status, identFillSymbol, drawEnd, false, true);
+						setMapAction(DrawTool.EXTENT, status, identFillSymbol, drawEnd, null, false, true);
 						break;
 					};
 					case DrawTool.POLYGON:{
 						status = polyLabel;
-						setMapAction(DrawTool.POLYGON, status, identFillSymbol, drawEnd, false, true);
+						setMapAction(DrawTool.POLYGON, status, identFillSymbol, drawEnd, null, false, true);
 						break;
 					};
 				};
@@ -580,13 +577,6 @@
 				identifyParams.mapExtent = map.extent;
 				if (useMapTime && map.timeExtent != null){
 					identifyParams.timeExtent = new TimeExtent(map.timeExtent.endTime, map.timeExtent.endTime);
-				};
-				if(betaReturnGeometryFix){
-					var geomString:String = JSONUtil.encode(geom).replace(',"spatialReference":{"wkid":' + geom.spatialReference.wkid + '}','');
-					var idURL:String = "?geometryType=" + geom.type + "&geometry=" + geomString;
-					idURL += "&sr=" + map.spatialReference.wkid.toString() + "&layers="
-					var idURL2:String = "&tolerance=" + identifyTolerance.toString() + "&mapExtent=" + map.extent.xmin.toString() + "," + map.extent.ymin.toString() + "," +  map.extent.xmax.toString() + "," +  map.extent.ymax.toString();
-					idURL2 += "&imageDisplay=" + map.width.toString() + "," + map.height.toString() + ",96" + "&returnGeometry=" + returnGeomForZoom.valueOf().toString() + "&f=json";
 				};
 				for (var i:Number = map.layerIds.length -1; i >= 0; i--){
 					arcL = null;
@@ -673,114 +663,13 @@
 					
 					if(url){
 						numServicesIdent++;
-						if(betaReturnGeometryFix){
-							var visString:String = "";
-							if(identifyParams.layerIds){
-								visString += ":";
-								for(var v:int=0; v<identifyParams.layerIds.length; v++){
-									if(v>0){
-										visString += ","
-									};
-									visString += identifyParams.layerIds[v].toString();
-								};
-							};
-							var cIdURL:String;
-							if (identifyParams.layerOption){
-								cIdURL = url + "/identify" + idURL + identifyParams.layerOption + visString + idURL2;
-							}else{
-								cIdURL= url + "/identify" + idURL + identifyLayerOption + visString + idURL2;
-							}
-							var iService:HTTPService = new HTTPService();
-							iService.url = cIdURL;
-							iService.resultFormat = "text";
-							var token:AsyncToken = iService.send();
-							token.addResponder(new AsyncResponder(buildIdResults, onFault, arcL));
-							showMessage(loadingLabel, true); 
-							showStateResults();
-						}else{
-							var identifyTask:IdentifyTask = new IdentifyTask(url);
-							if(useProxy)identifyTask.proxyURL = proxyURL;
-							identifyTask.execute(identifyParams,new AsyncResponder(onResult, onFault, arcL));
-							showMessage(loadingLabel, true); 
-							showStateResults();
-						};
+						var identifyTask:IdentifyTask = new IdentifyTask(url);
+						if(useProxy)identifyTask.proxyURL = proxyURL;
+						identifyTask.execute(identifyParams,new AsyncResponder(onResult, onFault, arcL));
+						showMessage(loadingLabel, true); 
+						showStateResults();
 					};
 				};
-			}			
-			
-			private function buildIdResults(event:ResultEvent, token:Object = null):void
-			{
-				var rawData:String = String(event.result);
-				var data:Object = JSONUtil.decode(rawData);
-				var retArray:Array = [];
-				if(data.error){
-					//do nothing;
-				}else{
-					for each( var idObj:Object in data.results){
-						var idResult:IdentifyResult = new IdentifyResult();
-						idResult.displayFieldName = idObj.displayFieldName;
-						idResult.layerId = idObj.layerId;
-						idResult.layerName = idObj.layerName;
-						idResult.feature = buildGra(idObj);
-						retArray.push(idResult);
-					};
-				};
-				function buildGra(obj:Object):Graphic
-				{
-					var gra:Graphic;
-					switch(obj.geometryType){
-						case Geometry.MAPPOINT:{
-							var mp:MapPoint = new MapPoint(obj.geometry.x, obj.geometry.y, new SpatialReference(obj.geometry.spatialReference.wkid));
-							gra = new Graphic(mp);
-							gra.attributes = obj.attributes;
-							break;
-						};
-						case Geometry.POLYGON:{
-							var mPoly:Polygon = new Polygon(null);
-							for (var i2:int = obj.geometry.rings.length - 1; i2 >= 0; i2--){
-								var ringArray:Array = [];
-								for (var j1:int = 0; j1 < obj.geometry.rings[i2].length; j1++){
-									var mpStr:String = obj.geometry.rings[i2][j1];
-									var xyArr:Array = mpStr.split(",")
-									var mp2:MapPoint = new MapPoint(xyArr[0], xyArr[1]);
-									mp2.spatialReference = new SpatialReference(obj.geometry.spatialReference.wkid);
-									ringArray.push(mp2);
-								};
-								mPoly.addRing(ringArray);
-							};
-							mPoly.spatialReference = new SpatialReference(obj.geometry.spatialReference.wkid);
-							
-							gra = new Graphic(mPoly);
-							gra.attributes = obj.attributes;
-							break;
-						};
-						case Geometry.EXTENT:{
-							var ext:Extent = new Extent(obj.geometry.xmin, obj.geometry.ymin, obj.geometry.xmax, obj.geometry.ymax, new SpatialReference(obj.geometry.spatialReference.wkid));
-							gra = new Graphic(ext);
-							gra.attributes = obj.attributes;
-							break;
-						};
-						case Geometry.POLYLINE:{
-							var pLine:Polyline = new Polyline(null);
-							for (var i3:int = obj.geometry.paths.length - 1; i3 >= 0; i3--){
-								var pathArray:Array = [];
-								for (var j2:int = 0; j2 < obj.geometry.paths[i3].length; j2++){
-									var mpStr2:String = obj.geometry.paths[i3][j2];
-									var xyArr2:Array = mpStr2.split(",")
-									var mp3:MapPoint = new MapPoint(xyArr2[0], xyArr2[1]);
-									mp3.spatialReference = new SpatialReference(obj.geometry.spatialReference.wkid);
-									pathArray.push(mp3);
-								};
-								pLine.addPath(pathArray);
-							};
-							gra = new Graphic(pLine);
-							gra.attributes = obj.attributes;
-							break;
-						};
-					};
-					return gra;
-				};
-				onResult(retArray,null);
 			}
 			
 			private function onResult(identifyResults:Array, arcL:* = null):void                
@@ -795,7 +684,7 @@
 				};
 				
 				for each (var identifyResult:IdentifyResult in identifyResults){
-					trace(ObjectUtil.toString(identifyResult));
+					//trace(ObjectUtil.toString(identifyResult));
 					var excludeLayer:Boolean = false;
 					for (var el:int=0; el < excludeLayers.length; el++){
 						if (identifyResult.layerName == excludeLayers[el]){
