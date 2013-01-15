@@ -1,4 +1,10 @@
-This is my identify widget for FlexViewer 3.0
+# Identify Widget
+
+[View live app here](http://gis.calhouncounty.org/FlexViewer3.1/index.html?config=config-identify)
+
+[![Image of Identify Widget](https://raw.github.com/rscheitlin/identify/master/Preview.jpg "Example Identify Widget app")](http://gis.calhouncounty.org/FlexViewer3.1/index.html?config=config-identify.xml)
+
+## Version Updates
 
 * 3.0.2 - Fixed the Gray Circle Of Death (GCOD) people were seeing beacuse of the glowfilter
 	  being applied to graphics not completely in the map extent.
@@ -190,18 +196,15 @@ This is my identify widget for FlexViewer 3.0
 
 * 2.1.1 includes a fix to the hyperlink button on the results not working
 
-It is a culmination of several different versions that I have produced 
-for the last year or more for the Sample Flex Viewer 1.x.
+## Features
 
-This version allows you to specify particular layers of a map service to 
-identify and the particular fields to display for those layers. This 
-version also supports hyperlinks and truly honors the setting of visible 
-in the xml configuration file. If you are using a featurelayer it will 
-identify the MapServer that is the the same as the FeatureServer and just 
-force indentification of the specified layer if there was one.
+It is a culmination of several different versions that I have produced for the last year or more for the Sample Flex Viewer 1.x.
 
-To install using the compiled version just copy the folder called Identify 
-under the Widgets folder, and add this line to your config.xml
+This version allows you to specify particular layers of a map service to identify and the particular fields to display for those layers. This version also supports hyperlinks and truly honors the setting of visible in the xml configuration file. If you are using a featurelayer it will identify the MapServer that is the the same as the FeatureServer and just force indentification of the specified layer if there was one.
+
+## How to install
+
+To install using the compiled version just copy the folder called Identify under the Widgets folder, and add this line to your config.xml
 
 <widget label="Identify" left="330" top="80" preload="open"
                 icon="assets/images/i_info.png"

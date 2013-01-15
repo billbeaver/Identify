@@ -19,10 +19,6 @@
 	<fx:Script>
 		<![CDATA[
 			import flashx.textLayout.conversion.TextConverter;
-			import flashx.textLayout.elements.TextFlow;
-			
-			import mx.controls.Alert;
-			import mx.events.FlexEvent;
 			
 			private const ID_RESULT_CLICK:String = "idResultClick";
 			private const ID_RESULT_OVER:String = "idResultOver";
