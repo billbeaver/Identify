@@ -1,3 +1,4 @@
+
 # Identify Widget
 
 [View live app here](http://gis.calhouncounty.org/FlexViewer3.1/index.html?config=config-identify.xml)
@@ -5,6 +6,12 @@
 [![Image of Identify Widget](https://raw.github.com/rscheitlin/identify/master/Preview.jpg "Example Identify Widget app")](http://gis.calhouncounty.org/FlexViewer3.1/index.html?config=config-identify.xml)
 
 ## Version Updates
+
+
+* 3.1.1 - Fixed an issue with attempts to identify hiddenLayer_s and featurelayers with no urls
+	- If the identify task fails the message with remaining layers to identify decrements properly.
+
+* 3.1   - Recompiled for Flex Viewer 3.1
 
 * 3.0.2 - Fixed the Gray Circle Of Death (GCOD) people were seeing beacuse of the glowfilter
 	  being applied to graphics not completely in the map extent.
