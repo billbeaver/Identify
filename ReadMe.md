@@ -1,6 +1,6 @@
 # Identify Widget
 
-[View live app here](http://gis.calhouncounty.org/FlexViewer3.1/index.html?config=config-identify)
+[View live app here](http://gis.calhouncounty.org/FlexViewer3.1/index.html?config=config-identify.xml)
 
 [![Image of Identify Widget](https://raw.github.com/rscheitlin/identify/master/Preview.jpg "Example Identify Widget app")](http://gis.calhouncounty.org/FlexViewer3.1/index.html?config=config-identify.xml)
 
