@@ -41,5 +41,7 @@ package widgets.Identify
 		public var graphic:Graphic;
 		
 		public var gid:Number;
+        
+        public var maporder:Number;
 	}
 }

@@ -58,7 +58,10 @@
 						if(idResult.links[l].tooltip){
 							lImg.toolTip = idResult.links[l].tooltip;
 						}
-						linkGroup.addElement(lImg);
+                        //Do not add the icon if the link is empty
+                        if(idResult.links[l].link !="" || idResult.links[l].link){
+						    linkGroup.addElement(lImg);
+                        }
 					}
 					if(idResult.links[0]){
 						if(idResult.links[0].link){

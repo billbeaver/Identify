@@ -7,6 +7,20 @@
 
 ## Version Updates
 
+* 3.1.2 - The use on the name tag for layers is now just an alias for what you want to appear in the dropdown list and as the title of the identify results. It is no longer required to be the exact name of the layer as specified in the REST Service directory.
+	- Each configured layer requires a url tag and an id tag. This is how this new version knows how to match the identify result to a layer that you have configured.
+	- The field element name is now the actual field name and NOT the alias name of the field as it was in all previous versions.
+	- Each excludelayer requires a url tag and an id tag. This is how this new version knows how to match the identify result to a layer that you have configured to be excluded.
+	- If a link field is null the hyperlink or icon or image will not be included in the results.
+	- You can disable the configured layer selection drop down list completely and it will not appear in the widget.
+	- You can disable just the All Layers as a choice from the drop down list and force your user to select only one layer at a time for identifying.
+	- You can disable popups for result graphics by using enablegraphicclickinfo.
+	- ArcGIS Online FeatureServer layers are now supported.
+	- Less traffic goes to the server as checks are made to see if layers require identification based on configuration.
+	- FeatureLayer types are now using QueryTask instead of trying to change the layer type to a dynamic map service so that the IdentifyTask can be used.
+	- Results are sorted in the in map layer order (i.e. the top most layers results are at the top of the results list).
+	- Because of the major changes configuring the identifying of Raster layers are now supported.
+	- You are warned with a popup if you fail to read these instructions first and do not update your old IdentifyWidget.xml file.
 
 * 3.1.1 - Fixed an issue with attempts to identify hiddenLayer_s and featurelayers with no urls
 	- If the identify task fails the message with remaining layers to identify decrements properly.
