@@ -215,7 +215,7 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.1.2";
+			protected const VERSION:String = "3.1.2f";
 			protected const BUILDDATE:String = "2/26/2013";
 
 			//Resources
@@ -1196,7 +1196,9 @@
 								shouldContinue = true;
 							}
 						}
-					}
+					}else{
+                        shouldContinue = true;
+                    }
 					if(!shouldContinue){
 						continue;
 					}

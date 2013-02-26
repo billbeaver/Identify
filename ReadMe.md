@@ -7,6 +7,8 @@
 
 ## Version Updates
 
+*3.1.2f - Fixed bug when disablelayerdropdown is set not results are returned in some situations.
+
 * 3.1.2 - The use on the name tag for layers is now just an alias for what you want to appear in the dropdown list and as the title of the identify results. It is no longer required to be the exact name of the layer as specified in the REST Service directory.
 	- Each configured layer requires a url tag and an id tag. This is how this new version knows how to match the identify result to a layer that you have configured.
 	- The field element name is now the actual field name and NOT the alias name of the field as it was in all previous versions.
