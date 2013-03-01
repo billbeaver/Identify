@@ -215,7 +215,7 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.1.3";
+			protected const VERSION:String = "3.1.3f";
 			protected const BUILDDATE:String = "3/1/2013";
 
 			//Resources
@@ -1175,9 +1175,10 @@
 				if(!identifyArrayCollection){
 					identifyArrayCollection = new ArrayCollection();
 				}
-
+                var shouldContinue:Boolean;
 				for each (var identifyResult:IdentifyResult in identifyResults){
 					var excludeLayer:Boolean = false;
+                    shouldContinue = false;
 					for (var el:int = 0; el < excludeLayers.length(); el++) {
 						if(arcL && arcL.url.toUpperCase() == excludeLayers[el].@url.toUpperCase() && identifyResult.layerId == excludeLayers[el].@id){
 							excludeLayer = true;
@@ -1187,7 +1188,7 @@
 					if (excludeLayer){
 						continue;
 					}
-					var shouldContinue:Boolean;
+					
 					if(!disableLayerDropdown){
 						if(disableAllLayersChoice){
 							if(arcL && arcL.url.toUpperCase() == ddMapService.selectedItem.url.toUpperCase() && identifyResult.layerId == ddMapService.selectedItem.id){
