@@ -215,8 +215,8 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.1.2f";
-			protected const BUILDDATE:String = "2/26/2013";
+			protected const VERSION:String = "3.1.3";
+			protected const BUILDDATE:String = "3/1/2013";
 
 			//Resources
 			[Embed(source="assets/images/i_about.png")]
@@ -874,7 +874,13 @@
 								fldArr.push(str);
 							}
 							var excludeLinkinResults:ArrayCollection = new ArrayCollection();
-							for (var a:int = 0; a < identLinks.length; a++){
+                            var a:int;
+                            //Need to alias all the link fields
+                            for (a = 0; a < identLinks.length; a++){
+                                fldAlias = (feats.fieldAliases && feats.fieldAliases[identLinks[a].field])?feats.fieldAliases[identLinks[a].field]:identLinks[a].field;
+                                identLinks[a].field = fldAlias;
+                            }
+							for (a = 0; a < identLinks.length; a++){
 								var link:String = "";
 								var linkicon:String = "";
 								var alias:String = "";
@@ -1135,7 +1141,7 @@
 				//strip the layer id from the url if it has one
 				url = url.replace(/\/[0-9]+$/g,"");
 				for(var i:int=0; i<configIdentLayers.length; i++){
-					if(url == configIdentLayers[i].url){
+					if(url.toUpperCase() == configIdentLayers[i].url.toUpperCase()){
 						retval = true;
 						break;
 					}
@@ -1173,7 +1179,7 @@
 				for each (var identifyResult:IdentifyResult in identifyResults){
 					var excludeLayer:Boolean = false;
 					for (var el:int = 0; el < excludeLayers.length(); el++) {
-						if(arcL && arcL.url == excludeLayers[el].@url && identifyResult.layerId == excludeLayers[el].@id){
+						if(arcL && arcL.url.toUpperCase() == excludeLayers[el].@url.toUpperCase() && identifyResult.layerId == excludeLayers[el].@id){
 							excludeLayer = true;
 							break;
 						}
@@ -1184,12 +1190,12 @@
 					var shouldContinue:Boolean;
 					if(!disableLayerDropdown){
 						if(disableAllLayersChoice){
-							if(arcL && arcL.url == ddMapService.selectedItem.url && identifyResult.layerId == ddMapService.selectedItem.id){
+							if(arcL && arcL.url.toUpperCase() == ddMapService.selectedItem.url.toUpperCase() && identifyResult.layerId == ddMapService.selectedItem.id){
 								shouldContinue = true;
 							}
 						}else{
 							if(ddMapService.selectedIndex > 0){
-								if(arcL && arcL.url == ddMapService.selectedItem.url && identifyResult.layerId == ddMapService.selectedItem.id){
+								if(arcL && arcL.url.toUpperCase() == ddMapService.selectedItem.url.toUpperCase() && identifyResult.layerId == ddMapService.selectedItem.id){
 									shouldContinue = true;
 								}
 							}else if(ddMapService.selectedIndex == 0){
@@ -1218,7 +1224,7 @@
 
 					for(var i:int=0; i<configIdentLayers.length; i++){
 						identFields = null;
-						if(arcL && arcL.url == configIdentLayers[i].url && identifyResult.layerId == configIdentLayers[i].id){
+						if(arcL && arcL.url.toUpperCase() == configIdentLayers[i].url.toUpperCase() && identifyResult.layerId == configIdentLayers[i].id){
 							identTitle = title = configIdentLayers[i].label;
 							identLinks = configIdentLayers[i].links;
 							identFields = configIdentLayers[i].fields;
@@ -1245,6 +1251,7 @@
 						for each (var fieldXML:XML in fields){
 							var fldAlias:String;
 							if(sFields){
+                                //trace(fieldXML.@name[0]);
 								fldAlias = getFieldAlias(sFields,fieldXML.@name[0]);
 							}
 							var str:String = (fldAlias)?fldAlias+ "~":fieldXML.@name[0] + "~";
@@ -1304,8 +1311,17 @@
 							}
 							fldArr.push(str);
 						}
+                        var a:int;
+                        //Need to alias all the link fields
+                        for (a = 0; a < identLinks.length; a++){
+                            if(sFields){
+                                //trace(identLinks[a].field);
+                                fldAlias = getFieldAlias(sFields,identLinks[a].field);
+                            }
+                            identLinks[a].field = (fldAlias)?fldAlias:identLinks[a].field;
+                        }
 						var excludeLinkinResults:ArrayCollection = new ArrayCollection();
-						for (var a:int = 0; a < identLinks.length; a++){
+						for (a = 0; a < identLinks.length; a++){
 							var link:String = "";
 							var linkicon:String = "";
 							var alias:String = "";
@@ -1581,7 +1597,7 @@
 							if(enableGraphicClickInfo){
 								var infoWindowRenderer2:ClassFactory = new ClassFactory(PopUpRenderer);
 								infoWindowRenderer2.properties = {popUpInfo: popUpInfo2}
-								iGra.infoWindowRenderer = infoWindowRenderer2;
+								iGra2.infoWindowRenderer = infoWindowRenderer2;
 							}
 							gid ++;
 							if(identifyLayerOption == "top" && resultFound){

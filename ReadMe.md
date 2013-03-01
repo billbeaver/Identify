@@ -7,6 +7,10 @@
 
 ## Version Updates
 
+
+*3.1.3  - Fixed an issue where the URL is for the layer in the main config.xml and the one used in the IdentifyWidget.xml have to be the same exact CaSe.
+	- Fixed a Bug where link field names still required the Field Alias name and not the actual field name.
+
 *3.1.2f - Fixed bug when disablelayerdropdown is set not results are returned in some situations.
 
 * 3.1.2 - The use on the name tag for layers is now just an alias for what you want to appear in the dropdown list and as the title of the identify results. It is no longer required to be the exact name of the layer as specified in the REST Service directory.
