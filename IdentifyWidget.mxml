@@ -1100,6 +1100,7 @@
 						showMessage(resultsFoundLbl + " " + identifyArrayCollection.length, false);
 						timedClose2();
 					}else{
+                        disableTimer2(null);
 						showMessage(loadingLabel + " " + layersRemaning + " " + numServicesIdent, true);
 					}
 				}
@@ -1618,6 +1619,7 @@
 					showMessage(resultsFoundLbl + " " + identifyArrayCollection.length, false);
 					timedClose2();
 				}else{
+                    disableTimer2(null);
 					showMessage(loadingLabel + " " + layersRemaning + " " + numServicesIdent, true);
 				}
 			}
