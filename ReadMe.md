@@ -7,6 +7,8 @@
 
 ## Version Updates
 
+* 3.1.4	- Fixed a bug when an unsupported layer is encountered in the map an RTE (Runtime Error) occurs.
+
 *3.1.3f - Fixed bug where if you specified a layer from the drop down any layer from that map service returned results anyway.
 
 *3.1.3  - Fixed an issue where the URL is for the layer in the main config.xml and the one used in the IdentifyWidget.xml have to be the same exact CaSe.
