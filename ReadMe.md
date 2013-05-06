@@ -1,11 +1,15 @@
 
 # Identify Widget
 
-[View live app here](http://gis.calhouncounty.org/FlexViewer3.1/index.html?config=config-identify.xml)
+[View live app here](http://gis.calhouncounty.org/FlexViewer3.3/index.html?config=config-identify.xml)
 
-[![Image of Identify Widget](https://raw.github.com/rscheitlin/identify/master/Preview.jpg "Example Identify Widget app")](http://gis.calhouncounty.org/FlexViewer3.1/index.html?config=config-identify.xml)
+[![Image of Identify Widget](https://raw.github.com/rscheitlin/identify/master/Preview.jpg "Example Identify Widget app")](http://gis.calhouncounty.org/FlexViewer3.3/index.html?config=config-identify.xml)
 
 ## Version Updates
+* 3.3 - Recompiled for Flex Viewer 3.3
+
+* 3.2	- Fixed bug with useutc and dateformat being ignored
+	- Workaround for doubleclick giving two results
 
 * 3.1.4	- Fixed a bug when an unsupported layer is encountered in the map an RTE (Runtime Error) occurs.
 

@@ -215,8 +215,8 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.1.4";
-			protected const BUILDDATE:String = "3/5/2013";
+			protected const VERSION:String = "3.3";
+			protected const BUILDDATE:String = "5/6/2013";
 
 			//Resources
 			[Embed(source="assets/images/i_about.png")]
@@ -524,7 +524,7 @@
 				clearSelectionFilter();
 				selectedDrawingIcon.filters = [ glowFilter ];
 
-				var status:String;
+				var status:String = "Identify";
 				var value:String = selectedDrawingIcon.name;
 
 				lastTool = selectedDrawingIcon.name;
@@ -556,7 +556,9 @@
 			{
 				clear();
 				if(keepActive){
-					activateIdentifyTool(null, lastTool);
+                    event.stopImmediatePropagation();
+                    event.target.deactivate();
+                    var timeOutVar:uint = setTimeout(activateIdentifyTool, 500, null, lastTool);
 				}else{
 					event.target.deactivate();
 					if (selectedDrawingIcon){
@@ -689,6 +691,11 @@
 
 						var excludeLayer:Boolean = false;
 						for (var el:int = 0; el < excludeLayers.length(); el++) {
+                            var eName:String = excludeLayers[el].@name;
+                            if(eName){
+                                excludeLayer = false;
+                                break;
+                            }
 							var fUrl:String = (excludeLayers[el].@url.substr(-1) == "/") ? excludeLayers[el].@url+excludeLayers[el].@id : excludeLayers[el].@url+"/"+excludeLayers[el].@id;
 							if(fUrl == featLayer.url){
 								excludeLayer = true;
@@ -735,6 +742,7 @@
 				var query:Query = new Query();
 				if(geom is MapPoint){
 					geom = createExtentAroundMapPoint(geom as MapPoint, identifyTolerance) as Extent;
+                    geom = Extent(geom).expand(1.1);
 				}
 				query.geometry = geom;
 				query.outFields =["*"];
@@ -958,12 +966,14 @@
 								}else{
 									isDateField = false;
 								}
-								if (isDateField && (value != "Null" || value != "")){
-									var dateMS:Number = Number(value);
-									if (!isNaN(dateMS)){
-										value = msToDate(dateMS, dateFormat, useUTC);
-									}
-								}
+                                if (isDateField && (value != "Null" || value != "")){
+                                    if (isNaN(Number(value)) == true){
+                                        var pDate:Date = new Date(value);
+                                        value = msToDate(pDate.getTime(), dateFormat, useUTC);
+                                    }else{
+                                        value = msToDate(Number(value), dateFormat, useUTC);
+                                    }
+                                }
 
 								if(numFormat !="NA" && value != "Null" && value != ""){
 									var args:Array = numFormat.split("|");
@@ -1182,8 +1192,18 @@
 				for each (var identifyResult:IdentifyResult in identifyResults){
 					var excludeLayer:Boolean = false;
                     shouldContinue = false;
+                    var eName:String;
+                    var eURL:String;
+                    var eId:Number;
 					for (var el:int = 0; el < excludeLayers.length(); el++) {
-						if(arcL && arcL.url.toUpperCase() == excludeLayers[el].@url.toUpperCase() && identifyResult.layerId == excludeLayers[el].@id){
+                        eName = excludeLayers[el].@name;
+                        eURL = excludeLayers[el].@url;
+                        eId = excludeLayers[el].@id
+                        if(eName && identifyResult.layerName == eName){
+                            excludeLayer = true;
+                            break;
+                        }
+                        if(arcL && eURL && eId && arcL.url.toUpperCase() == eURL.toUpperCase() && identifyResult.layerId == eId){
 							excludeLayer = true;
 							break;
 						}
@@ -1404,10 +1424,12 @@
 								isDateField = false;
 							}
 							if (isDateField && (value != "Null" || value != "")){
-								var dateMS:Number = Number(value);
-								if (!isNaN(dateMS)){
-									value = msToDate(dateMS, dateFormat, useUTC);
-								}
+								if (isNaN(Number(value)) == true){
+                                    var pDate:Date = new Date(value);
+                                    value = msToDate(pDate.getTime(), dateFormat, useUTC);
+								}else{
+                                    value = msToDate(Number(value), dateFormat, useUTC);
+                                }
 							}
 
 							if(numFormat !="NA" && value != "Null" && value != ""){
@@ -2102,6 +2124,7 @@
 			{
 				var data:Object = event.data;
 				if (data.key == "Deactivate_DrawTool"){
+                    //lastTool = null;
 					setMapAction(null, null, null, null);
 					if (selectedDrawingIcon){
 						selectedDrawingIcon.filters = [];
