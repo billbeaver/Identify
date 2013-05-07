@@ -18,6 +18,7 @@
 	<disablepopuplinks>false</disablepopuplinks>
 	<disablelayerdropdown>false</disablelayerdropdown>
 	<disablealllayerschoice>false</disablealllayerschoice>
+	<replacenullswithemptystring>true</replacenullswithemptystring>
 	<labels>
 		<zoom2message>Click to Zoom to Point</zoom2message>
 		<identifylabel>Identify</identifylabel>

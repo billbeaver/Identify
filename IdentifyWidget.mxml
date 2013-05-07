@@ -205,6 +205,8 @@
 			private var gid:Number = 1;
 
 			private var DisablePopUpLinks:Boolean;
+            
+            private var ReplaceNullsWithEmptyStrings:Boolean;
 
 			private var numServicesIdent:int;
 
@@ -215,8 +217,8 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.3";
-			protected const BUILDDATE:String = "5/6/2013";
+			protected const VERSION:String = "3.3.1";
+			protected const BUILDDATE:String = "5/7/2013";
 
 			//Resources
 			[Embed(source="assets/images/i_about.png")]
@@ -268,6 +270,7 @@
 					disableLayerDropdown = configXML.disablelayerdropdown && configXML.disablelayerdropdown == "true";
 					disableAllLayersChoice = configXML.disablealllayerschoice && configXML.disablealllayerschoice == "true";
 					enableGraphicClickInfo = configXML.enablegraphicclickinfo && configXML.enablegraphicclickinfo == "true";
+                    ReplaceNullsWithEmptyStrings = configXML.replacenullswithemptystring && configXML.replacenullswithemptystring == "true";
 					if (Number(configXML.identifytolerance) > 0){
 						identifyTolerance = Number(configXML.identifytolerance);
 					}
@@ -966,7 +969,7 @@
 								}else{
 									isDateField = false;
 								}
-                                if (isDateField && (value != "Null" || value != "")){
+                                if (isDateField && (value != "Null" && value != "")){
                                     if (isNaN(Number(value)) == true){
                                         var pDate:Date = new Date(value);
                                         value = msToDate(pDate.getTime(), dateFormat, useUTC);
@@ -1013,6 +1016,10 @@
 									}
 									value = currFormatter.format(value);
 								}
+                                
+                                if(ReplaceNullsWithEmptyStrings && (value == "Null" || value == "")){
+                                    value = "";
+                                }
 
 								if(!excludeLinkinResults.contains(cArr[0].toUpperCase())){
 									if(cArr[1] != "NA"){
@@ -1423,7 +1430,7 @@
 							}else{
 								isDateField = false;
 							}
-							if (isDateField && (value != "Null" || value != "")){
+							if (isDateField && (value != "Null" && value != "")){
 								if (isNaN(Number(value)) == true){
                                     var pDate:Date = new Date(value);
                                     value = msToDate(pDate.getTime(), dateFormat, useUTC);
@@ -1470,6 +1477,10 @@
 								}
 								value = currFormatter.format(value);
 							}
+                            
+                            if(ReplaceNullsWithEmptyStrings && (value == "Null" || value == "")){
+                                value = "";
+                            }
 
 							if(!excludeLinkinResults.contains(cArr[0].toUpperCase())){
 								if(cArr[1] != "NA"){
