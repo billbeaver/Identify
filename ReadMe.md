@@ -6,6 +6,10 @@
 [![Image of Identify Widget](https://raw.github.com/rscheitlin/identify/master/Preview.jpg "Example Identify Widget app")](http://gis.calhouncounty.org/FlexViewer3.3/index.html?config=config-identify.xml)
 
 ## Version Updates
+* 3.3.2 - Fixed issue where user was presented with login dialog even though token was provided in main config.xml
+	- Added circle and ellipse tools
+	- Applied workaround for ArcGIS Server 10 services sometimes not returning identify results in requested map projection.
+
 * 3.3.1 - Fixed bug with null values in Date fields coming back as some bad date (00/01/NaN).
 	- Added new Tag replacenullswithemptystring which specifies if a null field should display as null or an empty string in the results. 
 
