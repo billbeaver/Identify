@@ -1,11 +1,13 @@
 
 # Identify Widget
 
-[View live app here](http://gis.calhouncounty.org/FlexViewer3.3/index.html?config=config-identify.xml)
+[View live app here](http://gis.calhouncounty.org/FlexViewer3.4/index.html?config=config-identify.xml)
 
-[![Image of Identify Widget](https://raw.github.com/rscheitlin/identify/master/Preview.jpg "Example Identify Widget app")](http://gis.calhouncounty.org/FlexViewer3.3/index.html?config=config-identify.xml)
+[![Image of Identify Widget](https://raw.github.com/rscheitlin/identify/master/Preview.jpg "Example Identify Widget app")](http://gis.calhouncounty.org/FlexViewer3.4/index.html?config=config-identify.xml)
 
 ## Version Updates
+* 3.4   - Added full Application Builder GUI support for configuring the widget. No more writing XML yourself.
+
 * 3.3.2 - Fixed issue where user was presented with login dialog even though token was provided in main config.xml
 	- Added circle and ellipse tools
 	- Applied workaround for ArcGIS Server 10 services sometimes not returning identify results in requested map projection.
