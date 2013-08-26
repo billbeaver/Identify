@@ -6,6 +6,10 @@
 [![Image of Identify Widget](https://raw.github.com/rscheitlin/identify/master/Preview.jpg "Example Identify Widget app")](http://gis.calhouncounty.org/FlexViewer3.4/index.html?config=config-identify.xml)
 
 ## Version Updates
+
+* 3.4.1 - Fixed an issue with adding a new identify layer using App Builder GUI.
+		- Fixed an bug with No results found message being displayed when results were found.
+	
 * 3.4   - Added full Application Builder GUI support for configuring the widget. No more writing XML yourself.
 
 * 3.3.2 - Fixed issue where user was presented with login dialog even though token was provided in main config.xml
@@ -246,6 +250,11 @@ It is a culmination of several different versions that I have produced for the l
 This version allows you to specify particular layers of a map service to identify and the particular fields to display for those layers. This version also supports hyperlinks and truly honors the setting of visible in the xml configuration file. If you are using a featurelayer it will identify the MapServer that is the the same as the FeatureServer and just force indentification of the specified layer if there was one.
 
 ## How to install
+
+For Adding this widget to App Builder
+ - In Application Builder, click the Settings link to open the Settings page. Make certain that the advanced settings are displayed.
+ - Click Manage Custom Widgets.
+ - In the Manage Custom Widgets dialog box, browse to the ZIP file containing the packaged widget (For_AppBuilder3.x).
 
 To install using the compiled version just copy the folder called Identify under the Widgets folder, and add this line to your config.xml
 
