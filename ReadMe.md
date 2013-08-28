@@ -7,6 +7,9 @@
 
 ## Version Updates
 
+* 3.4.2 - Fixed an another issue with No results found message being displayed when results were found using
+          older ArcGIS Servers.
+		  
 * 3.4.1 - Fixed an issue with adding a new identify layer using App Builder GUI.
 		- Fixed an bug with No results found message being displayed when results were found.
 	
