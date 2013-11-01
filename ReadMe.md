@@ -7,6 +7,9 @@
 
 ## Version Updates
 
+
+* 3.5.1	- Fixed some issue with reference basemaps and identifying using the point tool
+
 * 3.5	- Recompiled for Flexviewer 3.5
 
 * 3.4.2 - Fixed an another issue with No results found message being displayed when results were found using

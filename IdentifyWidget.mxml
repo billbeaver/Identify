@@ -232,8 +232,8 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.5";
-			protected const BUILDDATE:String = "10/4/2013";
+			protected const VERSION:String = "3.5.1";
+			protected const BUILDDATE:String = "11/1/2013";
 
 			//Resources
 			[Embed(source="assets/images/i_about.png")]
@@ -725,7 +725,7 @@
 							useProxy = true;
 						}
 					}
-					var isBaseMap:Boolean;
+					var isBaseMap:Boolean = false;
 					if(excludeBasemaps){
 						if (configData && configData.basemaps){
 							for (var b:int = 0; b < configData.basemaps.length; b++){
@@ -780,6 +780,9 @@
 					}else if (layer is FeatureLayer){
 						//This is a feature layer so use a queryTask instead of the IdentifyTask.
 						var featLayer:FeatureLayer = layer as FeatureLayer;
+                        featLayer.outFields = ["*"];
+                        featLayer.useMapTime = true;
+                        featLayer.definitionExpression = null;
                         token = featLayer.token;
 						var excludeLayer:Boolean = false;
 						for (var el:int = 0; el < excludeLayers.length(); el++) {
@@ -835,17 +838,19 @@
 			private function queryFeature(featLayer:FeatureLayer,geom:Geometry,retGeom:Boolean,order:Number):void
 			{
 				var query:Query = new Query();
+                query.spatialRelationship = Query.SPATIAL_REL_INTERSECTS;
 				if(geom is MapPoint){
 					geom = createExtentAroundMapPoint(geom as MapPoint, identifyTolerance) as Extent;
-                    geom = Extent(geom).expand(1.1);
+                    if (featLayer.layerDetails && featLayer.layerDetails.geometryType == Geometry.MAPPOINT) {
+                        query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                    }
 				}
 				query.geometry = geom;
 				query.outFields =["*"];
 				query.returnGeometry = retGeom;
-				query.spatialRelationship = Query.SPATIAL_REL_INTERSECTS;
 				query.outSpatialReference = map.spatialReference;
 
-				featLayer.queryFeatures(query,new AsyncResponder(result,fault,featLayer));
+				featLayer.queryFeatures(query, new AsyncResponder(result, fault, featLayer));
 				function result(feats:FeatureSet, token:Object):void{
 					numServicesIdent--;
 					if(!identifyArrayCollection){
