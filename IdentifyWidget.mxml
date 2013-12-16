@@ -232,8 +232,8 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.5.1";
-			protected const BUILDDATE:String = "11/1/2013";
+			protected const VERSION:String = "3.5.3";
+			protected const BUILDDATE:String = "12/16/2013";
 
 			//Resources
 			[Embed(source="assets/images/i_about.png")]
@@ -715,7 +715,7 @@
 				for (var i:Number = map.layerIds.length -1; i >= 0; i--){
 					arcL = null;
 					identifyParams.layerOption = identifyLayerOption;
-					var layer:Layer = map.getLayer(map.layerIds[i]);
+                    var layer:Layer = map.layers[i];
 					identifyParams.layerIds = null;
 					var url:String = "";
                     var token:String = null;

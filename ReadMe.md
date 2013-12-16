@@ -7,6 +7,7 @@
 
 ## Version Updates
 
+* 3.5.2	- Fixed an issue with layers having the same label
 
 * 3.5.1	- Fixed some issue with reference basemaps and identifying using the point tool
 
