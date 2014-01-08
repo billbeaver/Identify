@@ -1,11 +1,16 @@
 
 # Identify Widget
 
-[View live app here](http://gis.calhouncounty.org/FlexViewer3.4/index.html?config=config-identify.xml)
+[View live app here](http://gis.calhouncounty.org/FlexViewer3.6/index.html?config=config-identify.xml)
 
-[![Image of Identify Widget](https://raw.github.com/rscheitlin/identify/master/Preview.jpg "Example Identify Widget app")](http://gis.calhouncounty.org/FlexViewer3.4/index.html?config=config-identify.xml)
+[![Image of Identify Widget](https://raw.github.com/rscheitlin/identify/master/Preview.jpg "Example Identify Widget app")](http://gis.calhouncounty.org/FlexViewer3.6/index.html?config=config-identify.xml)
 
 ## Version Updates
+
+* 3.6.1 - Fixed an issue with the popup that appears when the identified feature is clicked did not contain the link configured
+	      - Fixed issues with the App Builder GUI not reading several of the widgets configuration options.
+
+* 3.6	- Recompiled for Flexviewer 3.6
 
 * 3.5.2	- Fixed an issue with layers having the same label
 

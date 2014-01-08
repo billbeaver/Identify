@@ -232,8 +232,8 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.5.3";
-			protected const BUILDDATE:String = "12/16/2013";
+			protected const VERSION:String = "3.3.2";
+			protected const BUILDDATE:String = "5/16/2013";
 
 			//Resources
 			[Embed(source="assets/images/i_about.png")]
@@ -715,7 +715,7 @@
 				for (var i:Number = map.layerIds.length -1; i >= 0; i--){
 					arcL = null;
 					identifyParams.layerOption = identifyLayerOption;
-                    var layer:Layer = map.layers[i];
+					var layer:Layer = map.getLayer(map.layerIds[i]);
 					identifyParams.layerIds = null;
 					var url:String = "";
                     var token:String = null;
@@ -725,7 +725,7 @@
 							useProxy = true;
 						}
 					}
-					var isBaseMap:Boolean = false;
+					var isBaseMap:Boolean;
 					if(excludeBasemaps){
 						if (configData && configData.basemaps){
 							for (var b:int = 0; b < configData.basemaps.length; b++){
@@ -780,9 +780,6 @@
 					}else if (layer is FeatureLayer){
 						//This is a feature layer so use a queryTask instead of the IdentifyTask.
 						var featLayer:FeatureLayer = layer as FeatureLayer;
-                        featLayer.outFields = ["*"];
-                        featLayer.useMapTime = true;
-                        featLayer.definitionExpression = null;
                         token = featLayer.token;
 						var excludeLayer:Boolean = false;
 						for (var el:int = 0; el < excludeLayers.length(); el++) {
@@ -838,19 +835,17 @@
 			private function queryFeature(featLayer:FeatureLayer,geom:Geometry,retGeom:Boolean,order:Number):void
 			{
 				var query:Query = new Query();
-                query.spatialRelationship = Query.SPATIAL_REL_INTERSECTS;
 				if(geom is MapPoint){
 					geom = createExtentAroundMapPoint(geom as MapPoint, identifyTolerance) as Extent;
-                    if (featLayer.layerDetails && featLayer.layerDetails.geometryType == Geometry.MAPPOINT) {
-                        query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                    }
+                    geom = Extent(geom).expand(1.1);
 				}
 				query.geometry = geom;
 				query.outFields =["*"];
 				query.returnGeometry = retGeom;
+				query.spatialRelationship = Query.SPATIAL_REL_INTERSECTS;
 				query.outSpatialReference = map.spatialReference;
 
-				featLayer.queryFeatures(query, new AsyncResponder(result, fault, featLayer));
+				featLayer.queryFeatures(query,new AsyncResponder(result,fault,featLayer));
 				function result(feats:FeatureSet, token:Object):void{
 					numServicesIdent--;
 					if(!identifyArrayCollection){
@@ -1379,6 +1374,7 @@
 						for each (var fieldXML:XML in fields){
 							var fldAlias:String;
 							if(sFields){
+                                //trace(fieldXML.@name[0]);
 								fldAlias = getFieldAlias(sFields,fieldXML.@name[0]);
 							}
 							var str:String = (fldAlias)?fldAlias+ "~":fieldXML.@name[0] + "~";
@@ -1856,16 +1852,6 @@
                 if(returnGeomForZoom){
                     graphicsLayer.add(iGra);
                 }
-                if(identifyArrayCollection.length == 0 && numServicesIdent <= 0){
-                    showMessage(noResultsFoundLbl, false); 
-                    timedClose2();
-                }else if(identifyArrayCollection.length > 0 && numServicesIdent <= 0){
-                    showMessage(resultsFoundLbl + " " + identifyArrayCollection.length, false);
-                    timedClose2();
-                }else{
-                    disableTimer2(null);
-                    showMessage(loadingLabel + " " + layersRemaning + " " + numServicesIdent, true);
-                }
             }
 
 			private function getResultByGID(gid:Number):IdResult
@@ -2001,10 +1987,8 @@
 					showMessage(fault.faultString + ", " + fault.faultDetail, false);
 				}else if(identifyArrayCollection && identifyArrayCollection.length == 0){
 					showMessage(noResultsFoundLbl, false);
-                }else if(identifyArrayCollection.length > 0 && numServicesIdent <= 0){
-                    showMessage(resultsFoundLbl + " " + identifyArrayCollection.length, false);
 				}else{
-                    showMessage(loadingLabel + " " + layersRemaning + " " + numServicesIdent, true);
+					showMessage(fault.faultString + ", " + fault.faultDetail, false);
 				}
 			}
 
@@ -2258,9 +2242,15 @@
 							pminfos.push(popUpMediaInfo);
 						}else{
 							if(!DisablePopUpLinks){
+								//todo Need to escape curly braces
 								var escdLink:String = links[l].link;
+								//escdLink = escdLink.replace(/\{/g,"\u007B");
+								//escdLink = escdLink.replace(/\}/g,"\u007D");
+								//trace("  slashed: " + escdLink);
+								//escdLink = "http://servername/results.aspx?searchtype=Advanced&Infrastructure_Drawings=\\{ID_Drawing_No=1805163002019.000\\}";
 								var lText:String = (links[l].alias != "") ? links[l].alias : escdLink;
 								popUpInfo.description += "<br /><a href='" + escdLink + "'>" + lText + "</a>";
+									//trace("Config PopUp: " + popUpInfo.description);
 							}
 						}
 					}
