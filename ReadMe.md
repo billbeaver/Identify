@@ -7,6 +7,9 @@
 
 ## Version Updates
 
+* 3.6.2 - Links with icon specified and link url is not an image will appear as a image (using the link icon) in the popup that is hyperlinked to the specified link url
+        - Fixed major App builder issue with adding identify layer.
+        
 * 3.6.1 - Fixed an issue with the popup that appears when the identified feature is clicked did not contain the link configured
 	      - Fixed issues with the App Builder GUI not reading several of the widgets configuration options.
 
