@@ -232,8 +232,8 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.6.2";
-			protected const BUILDDATE:String = "1/14/2014";
+			protected const VERSION:String = "3.6.3";
+			protected const BUILDDATE:String = "2/3/2014";
 
 			//Resources
 			[Embed(source="assets/images/i_about.png")]
@@ -300,14 +300,6 @@
 					AutoCloseNum = configXML.infoautoclosemilliseconds;
 
 					proxyURL = configData.proxyUrl;
-					var proxyMSList:XMLList = configXML..proxymapservice;
-					configIdentProxyMS = [];
-					for (var j:Number = 0; j < proxyMSList.length(); j++){
-						var identProxyMapService:Object={
-								label: proxyMSList[j].@label
-							}
-						configIdentProxyMS.push(identProxyMapService);
-					}
 
 					configIdentLayers = [];
 					configLayers = [];
@@ -317,6 +309,7 @@
 					for (var i:Number = 0; i < lyrList.length(); i++){
 						var lyrLabel:String = lyrList[i].name;
 						var lyrURL:String = lyrList[i].url;
+                        var lyrUseProxy:Boolean = lyrList[i].useproxy[0];
                         var lyrToken:String = "";
 						if(!lyrURL){
 							need2Warn = true;
@@ -339,6 +332,10 @@
                         
 						var lyrID:int = lyrList[i].id;
 						var dynLyr:ArcGISDynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer(lyrURL,null,lyrToken);
+                        if (lyrUseProxy) {
+                            dynLyr.proxyURL = configData.proxyUrl;
+                        }
+                        
 						dynLyr.getDetails(lyrID, new AsyncResponder(getDetailResult, detailFault, lyrURL));
 						function getDetailResult(event:LayerDetails, lyrURL:String):void{
 							var fUrl:String = (lyrURL.substr(-1) == "/") ? lyrURL+event.id.toString() : lyrURL+"/"+event.id.toString();
@@ -720,11 +717,7 @@
 					var url:String = "";
                     var token:String = null;
 					var useProxy:Boolean = false;
-					for(var p:int=0; p<configIdentProxyMS.length; p++){
-						if (layer.name == configIdentProxyMS[p].label){
-							useProxy = true;
-						}
-					}
+
 					var isBaseMap:Boolean = false;
 					if(excludeBasemaps){
 						if (configData && configData.basemaps){
@@ -751,9 +744,8 @@
 						arcL = layer as ArcGISDynamicMapServiceLayer;
 						url = arcL.url;
                         token = arcL.token;
-						if(arcL.layerDefinitions){
-							identifyParams.layerDefinitions = arcL.layerDefinitions;
-						}
+                        if(arcL.proxyURL) useProxy = true;
+						if(arcL.layerDefinitions) identifyParams.layerDefinitions = arcL.layerDefinitions;
 						if(identifyLayerOption == "visible" || identifyLayerOption == "top"){
 							if(arcL.visible == false || arcL.isInScaleRange == false){
 								url="";
@@ -771,6 +763,7 @@
 						var tiledLayer:ArcGISTiledMapServiceLayer = layer as ArcGISTiledMapServiceLayer;
 						url = tiledLayer.url;
                         token = tiledLayer.token;
+                        if(tiledLayer.proxyURL) useProxy = true;
 						if(identifyLayerOption == "visible" || identifyLayerOption == "top"){
 							if(tiledLayer.visible == false || tiledLayer.isInScaleRange == false){
 								url="";
@@ -784,6 +777,7 @@
                         featLayer.useMapTime = true;
                         featLayer.definitionExpression = null;
                         token = featLayer.token;
+                        if(featLayer.proxyURL) useProxy = true;
 						var excludeLayer:Boolean = false;
 						for (var el:int = 0; el < excludeLayers.length(); el++) {
                             var eName:String = excludeLayers[el].@name;

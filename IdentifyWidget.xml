@@ -42,10 +42,6 @@
         <alllayers>All Layers</alllayers>
         <layersremaining>layers remaining:</layersremaining>
     </labels>
-    <useproxy><!-- Enter the label of the MapService from the main config.xml -->
-        <!--<proxymapservice label="Imagery" /> 
-        <proxymapservice label="Streets" /> -->
-    </useproxy>
     <layers onlythese="false">
         <layer>
             <name>AGO Organizational Layer</name>
