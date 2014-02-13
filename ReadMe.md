@@ -7,6 +7,8 @@
 
 ## Version Updates
 
+* 3.6.4 - Fixed more issue with App Builder GUI not reading Boolean values correctly
+
 * 3.6.3 - The way that proxy layer is configured has completely changed. Now all you do is set the useproxy tag to true for each layer that is required to use the proxy.
 
 * 3.6.2 - Links with icon specified and link url is not an image will appear as a image (using the link icon) in the popup that is hyperlinked to the specified link url
