@@ -7,6 +7,11 @@
 
 ## Version Updates
 
+* 3.6.5 - Added some edit detection to the App Builder GUI so if you neglect to click save/update for a layer it will save for you.
+        - Added Copy results to clipboard button,this will copy all the identify results to the system clipboard.
+        - Added popuplinktype attribute to link so you can specify if the popup link will just be a text link or it will attempt to use
+          the url image or the icon image in the popup.
+
 * 3.6.4 - Fixed more issue with App Builder GUI not reading Boolean values correctly
 
 * 3.6.3 - The way that proxy layer is configured has completely changed. Now all you do is set the useproxy tag to true for each layer that is required to use the proxy.

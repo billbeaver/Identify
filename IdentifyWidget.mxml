@@ -96,6 +96,8 @@
 
 			//labels
 			private var identifyLabel:String;
+            
+            private var copyLabel:String;
 
 			private var resultsLabel:String;
 
@@ -232,8 +234,8 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.6.3";
-			protected const BUILDDATE:String = "2/3/2014";
+			protected const VERSION:String = "3.6.5";
+			protected const BUILDDATE:String = "3/1/2014";
 
 			//Resources
 			[Embed(source="assets/images/i_about.png")]
@@ -262,6 +264,7 @@
 					zoom2Msg = configXML.labels.zoom2message || "Click to Zoom to Point";
 					removeMsg = configXML.labels.removeresultmessage || "Remove Result";
 					identifyLabel = configXML.labels.identifylabel || "Identify";
+                    copyLabel = configXML.labels.copylabel || "Copy results to clipboard";
 					resultsLabel = configXML.labels.resultslabel || "Results";
 					descriptionLabel = configXML.labels.descriptionlabel || "Use the identify tool to identify features on the map:";
 					pointLabel = configXML.labels.pointlabel || "Identify Point";
@@ -359,6 +362,7 @@
 							var lyrLinkIconField:String = lyrLinkList[l].iconfield || "";
 							var lyrLinkIconPre:String = lyrLinkList[l].iconprefix || "";
 							var lyrLinkIconSuffix:String = lyrLinkList[l].iconsuffix || "";
+                            var lyrPopupType:String = lyrLinkList[l].@popuplinktype || "image";
 							var incLinkInRslts:Boolean = lyrLinkList[l].@includeinresults && lyrLinkList[l].@includeinresults == "true";
 							var linkObj:Object = {
 									field: lyrLinkField,
@@ -369,7 +373,8 @@
 									tooltip: lyrLinkToolTip,
 									icon: lyrLinkIconField,
 									iconpre: lyrLinkIconPre,
-									iconsuf: lyrLinkIconSuffix
+									iconsuf: lyrLinkIconSuffix,
+                                    popuptype: lyrPopupType
 								};
 							lyrLinks.push(linkObj);
 						}
@@ -461,9 +466,10 @@
 				graphicsLayer.id = graphicsLayer.name = "hiddenLayer_IDWidgetGL";
 				map.addLayer(graphicsLayer);
 
-
+                wTemplate.addTitlebarButton("widgets/Identify/assets/images/i_copy.png", copyLabel, copyResultstoCB, false);
 				wTemplate.addTitlebarButton(ICON_URL + "i_info.png", identifyLabel, showStateIdentify);
 				wTemplate.addTitlebarButton(ICON_URL + "i_table.png", resultsLabel, showStateResults);
+                
 				wTemplate.header.addEventListener(MouseEvent.CLICK, DisplayVersion);
 				AppEvent.addListener(AppEvent.DATA_PUBLISH, sharedDataUpdated);
 				if (autoActivatedTool != "" ){
@@ -987,6 +993,7 @@
 								var linkicon:String = "";
 								var alias:String = "";
 								var ltooltip:String ="";
+                                var popupType:String = "";
 								for (var f2:Number = 0; f2 < fldArr.length; f2++) {
 									var cArr0:Array = fldArr[f2].split("~");
 									var val:String;
@@ -1012,6 +1019,7 @@
 											if(val != "" && val != "Null"){
 												link = identLinks[a].pre + val + identLinks[a].suf;
 											}
+                                            popupType = identLinks[a].popuptype;
 											if((identLinks[a].iconpre != "" || identLinks[a].iconsuf != "") && identLinks[a].icon == ""){
 												linkicon = identLinks[a].iconpre + identLinks[a].iconsuf;
 											}
@@ -1032,7 +1040,8 @@
 										link: link,
 										icon: (linkicon == "")?null:linkicon,
 										alias: alias,
-										tooltip: ltooltip
+										tooltip: ltooltip,
+                                        popuptype: popupType
 									};
 								lyrIdLinks.push(lObj);
 							}
@@ -1443,7 +1452,8 @@
 							var link:String = "";
 							var linkicon:String = "";
 							var alias:String = "";
-							var ltooltip:String ="";
+							var ltooltip:String = "";
+                            var popupType:String = "";
 							for (var f2:Number = 0; f2 < fldArr.length; f2++) {
 								var cArr0:Array = fldArr[f2].split("~");
 								var val:String;
@@ -1465,6 +1475,7 @@
 										if(!identLinks[a].inc){
 											excludeLinkinResults.addItem(identLinks[a].field.toUpperCase())
 										}
+                                        popupType = identLinks[a].popuptype;
 										//concatenate
 										if(val != "" && val != "Null"){
 											link = identLinks[a].pre + val + identLinks[a].suf;
@@ -1489,7 +1500,8 @@
 									link: link,
 									icon: (linkicon == "")?null:linkicon,
 									alias: alias,
-									tooltip: ltooltip
+									tooltip: ltooltip,
+                                    popuptype: popupType
 								};
 							lyrIdLinks.push(lObj);
 						}
@@ -2235,13 +2247,13 @@
 					if (links[l].link){
 						var pos:Number = links[l].link.length - 4;
 						var sfx:String = String(links[l].link).substr(pos, 4).toLowerCase();
-						if ((sfx == ".jpg") || (sfx == ".png") || (sfx == ".gif")){ // use PopUpMediaInfo if it is an image
+						if (((sfx == ".jpg") || (sfx == ".png") || (sfx == ".gif")) && links[l].popuptype != "text"){ // use PopUpMediaInfo if it is an image
 							var popUpMediaInfo:PopUpMediaInfo = new PopUpMediaInfo;
 							popUpMediaInfo.type = PopUpMediaInfo.IMAGE;
 							popUpMediaInfo.imageLinkURL = links[l].link;
 							popUpMediaInfo.imageSourceURL = links[l].link;
 							pminfos.push(popUpMediaInfo);
-                        }else if(links[l].icon != ""){
+                        }else if(links[l].icon != "" && links[l].popuptype != "text"){
                             var popUpMediaInfo2:PopUpMediaInfo = new PopUpMediaInfo;
                             popUpMediaInfo2.type = PopUpMediaInfo.IMAGE;
                             popUpMediaInfo2.imageLinkURL = links[l].link;
@@ -2426,7 +2438,46 @@
 						wTemplate.widgetTitle, 4, null, null, iconClass);
 				}
 			}
-		]]>
+            
+            private function removeContentFormatting(content:String):String
+            {
+                var os:String = flash.system.Capabilities.os.substr(0, 3);
+                var nl:String;
+                if (os == "Win") {
+                    nl = "\r\n";
+                }else{
+                    nl = "\n";
+                }
+                var retVal:String
+                retVal = content;
+                var myPattern:RegExp = /<[^>]*>/g; //find html tags
+                var myPattern2:RegExp  = /<br\s*\>/ig; //find html breaks
+                retVal = retVal.replace(myPattern2, nl);
+                retVal = retVal.replace(myPattern, "");
+                return retVal;
+            }
+            
+            private function copyResultstoCB():void
+            {
+                if(!identifyArrayCollection) return
+                var os:String = flash.system.Capabilities.os.substr(0, 3);
+                var nl:String;
+                if (os == "Win") {
+                    nl = "\r\n";
+                }else{
+                    nl = "\n";
+                }
+                var cbString:String = "";
+                for (var r:int = 0; r < identifyArrayCollection.length; r ++){
+                    var idRslt:IdResult = identifyArrayCollection.getItemAt(r) as IdResult;
+                    cbString += idRslt.title + nl;
+                    cbString += removeContentFormatting(idRslt.content) + nl;
+                    cbString += nl;
+                }
+                System.setClipboard(cbString);
+            }
+            
+        ]]>
 	</fx:Script>
 	<viewer:WidgetTemplate id="wTemplate"
 						   closed="widgetClosedHandler(event)"

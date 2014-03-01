@@ -41,9 +41,11 @@
         <resultsfoundlabel>Results Found</resultsfoundlabel>
         <alllayers>All Layers</alllayers>
         <layersremaining>layers remaining:</layersremaining>
+        <copylabel>Copy results to clipboard</copylabel>
     </labels>
     <layers onlythese="false">
         <layer>
+	    <useproxy>false</useproxy>
             <name>AGO Organizational Layer</name>
             <id>0</id>
             <url>https://services.arcgis.com/EguFTd9xPXEoDtC7/ArcGIS/rest/services/Polygons/FeatureServer</url>
@@ -67,157 +69,7 @@
             <zoomscale>15000</zoomscale>
             <forcescale>true</forcescale>
         </layer>
-        <layer>
-            <name>MPO</name>
-            <id>0</id>
-            <url>http://svctenvims.dot.ca.gov/dea_web_gis/rest/services/agencies/agencies/MapServer</url>
-            <fields>
-                <field name="NAME" alias="Name: " />
-                <field name="LABEL" alias="Label: " />
-                <field name="STREET" alias="Street: " />
-                <field name="CITY_ZIP" alias="City and Zip: " />
-                <field name="WEBURL" alias="Website: " />
-            </fields>
-            <links>
-                <link includeinresults="true" field="WEBURL" alias="View Website"
-                    tooltip="Click to View Website">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
-            <zoomscale>15000</zoomscale>
-            <forcescale>true</forcescale>
-        </layer>
-        <layer>
-            <name>Soils</name>
-            <id>0</id>
-            <url>http://gislap183/arcgis/rest/services/RasterIdentify/MapServer</url>
-            <fields>
-                <field name="MUSYM" />
-            </fields>
-            <links>
-                <link includeinresults="false" field="" alias=""
-                    tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
-            <zoomscale>15000</zoomscale>
-            <forcescale>true</forcescale>
-        </layer>
-        <layer>
-            <name>SubType</name>
-            <id>0</id>
-            <url>http://gislap183:6080/arcgis/rest/services/SubTypes/MapServer</url>
-            <fields>
-                <field name="TYPECODE" />
-                <field name="STATUS" />
-                <field name="COVER_TYPE" />
-                <field name="MATERIAL" />
-                <field name="OWNER" />
-                <field name="CONTRACTOR" />
-                <field name="MUNICIPALI" />
-                <field name="OPER_DISTR" />
-                <field name="LOCATION" />
-                <field name="SUB_TYPE" />
-                <field name="PWTYPE" />
-                <field name="STOP_NUM" />
-            </fields>
-            <links>
-                <link includeinresults="true" field="" alias="" tooltip="">
-                    <linkprefix></linkprefix>
-                    <linksuffix></linksuffix>
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
-            <zoomscale>12000</zoomscale>
-            <forcescale>true</forcescale>
-        </layer>
-        <layer>
-            <name>Parcels</name>
-            <id>1</id>
-            <url>http://gislap183:6080/arcgis/rest/services/ParcelTest/MapServer</url>
-            <fields>
-                <field name="Parcels3.NAME" />
-                <field name="Parcels3.TMP_NO" />
-                <field name="Parcels3.STREET_ADDRESS" />
-            </fields>
-            <links>
-                <link includeinresults="true" field=""
-                    alias="" tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
-            <zoomscale>12000</zoomscale>
-            <forcescale>true</forcescale>
-        </layer>
-        <layer>
-            <name>Condos</name>
-            <id>2</id>
-            <url>http://gislap183:6080/ArcGIS/rest/services/ParcelTest/MapServer</url>
-            <fields>
-                <field name="Parcels3.NAME" />
-                <field name="Parcels3.TMP_NO" />
-                <field name="Parcels3.STREET_ADDRESS" />
-            </fields>
-            <links>
-                <link includeinresults="false" field="" alias=""
-                    tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
-            <zoomscale>12000</zoomscale>
-            <forcescale>true</forcescale>
-        </layer>
-        <layer>
-            <name>Road Centerlines</name>
-            <id>2</id>
-            <url>http://gislap183/arcgis/rest/services/ScaleDependentTest/MapServer</url>
-            <fields>
-                <field name="Road Name" />
-                <field name="Classification" />
-                <field name="Length of Road" numberformat="2|,|." />
-                <field name="Width of Road" />
-                <field name="Left From Address" />
-                <field name="Left To Address" />
-                <field name="Right From Address" />
-                <field name="Right To Address" />
-                <field name="Before Directional" />
-                <field name="Road Type" />
-                <field name="Road Name" />
-                <field name="Road Suffix" />
-                <field name="After Directional " />
-                <field name="Zip Code Left" />
-                <field name="Zip Code Right" />
-            </fields>
-            <links>
-                <link includeinresults="false" field="" alias="" tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
-            <zoomscale>12000</zoomscale>
-            <forcescale>true</forcescale>
-        </layer>
+
         <layer>
             <name>Zoning</name>
             <id>2</id>
@@ -226,15 +78,7 @@
                 <field name="ZONING_NAME" alias="Zoning Name" />
                 <field name="ZONING_TYPE" alias="Zoning Type" popuponly="true" />
             </fields>
-            <links>
-                <link includeinresults="false" field="" alias=""  tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
+            <links/>
             <zoomscale>15000</zoomscale>
             <forcescale>true</forcescale>
         </layer>
@@ -245,43 +89,14 @@
             <fields>
                 <field name="LANDUSE_NAME" alias="Landuse Name" />
             </fields>
-            <links>
-                <link includeinresults="false" field="" alias="" tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
+            <links/>
             <zoomscale>15000</zoomscale>
-            <forcescale>true</forcescale>
-        </layer>
-        <layer>
-            <name>Crimes</name>
-            <id>0</id>
-            <url>http://gis.calhouncounty.org/ArcGIS2/rest/services/CountyCrimeMap/MapServer</url>
-            <fields>
-                <field name="Desc_" />
-                <field name="Begin_Date_Occ" dateformat="MM/DD/YYYY LL:NN A" useutc="false"/>
-                <field name="Begin_Time_Occ" />
-            </fields>
-            <links>
-                <link includeinresults="false" field="" alias="" tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
-            <zoomscale>12000</zoomscale>
             <forcescale>true</forcescale>
         </layer>
         <layer>
             <name>Owner Parcels</name>
             <id>67</id>
-            <url>http://gis.calhouncounty.org/ArcGIS2/rest/services/ParcelViewerWM/MapServer</url>
+            <url>http://someserver/ArcGIS/rest/services/someservice/MapServer</url>
             <fields>
                 <field name="PPIN" />
                 <field name="NAME" />
@@ -307,34 +122,18 @@
                 <field name="SHAPE_Length" popuponly="true" numberformat="2|,|." />
                 <field name="SHAPE_Area" popuponly="true" numberformat="2|,|." />
             </fields>
-            <links>
-                <link includeinresults="false" field="" alias="" tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
+            <links/>
             <zoomscale>12000</zoomscale>
             <forcescale>true</forcescale>
         </layer>
         <layer>
             <name>Jacksonville City Limits</name>
             <id>73</id>
-            <url>http://gis.calhouncounty.org/ArcGIS2/rest/services/ParcelViewerWM/MapServer</url>
+            <url>http://someserver/ArcGIS/rest/services/someservice/MapServer</url>
             <fields>
                 <field name="Name" alias="Name" />
             </fields>
-            <links>
-                <link includeinresults="false" field="" alias="" tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
+            <links/>
             <zoomscale>15000</zoomscale>
             <forcescale>true</forcescale>
         </layer>
@@ -360,7 +159,7 @@
                     <iconsuffix>http://help.arcgis.com/en/webapps/flexviewer/live/assets/images/i_camera.png
                     </iconsuffix>
                 </link>
-                <link includeinresults="true" field="ONLINE"
+                <link includeinresults="true" field="ONLINE" popuplinktype="text"
                     alias="get me out of here" tooltip="">
                     <linkprefix />
                     <linksuffix />
@@ -381,16 +180,7 @@
                 <field name="NAME" alias="Name" />
                 <field name="ADDRESS" alias="Address" />
             </fields>
-            <links>
-                <link includeinresults="false" field="" alias=""
-                    tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
+            <links/>
             <zoomscale>2000</zoomscale>
             <forcescale>true</forcescale>
         </layer>
@@ -402,16 +192,7 @@
                 <field name="LOCAL" alias="Local" />
                 <field name="ADDRESS" alias="Address" />
             </fields>
-            <links>
-                <link includeinresults="false" field="" alias=""
-                    tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
+            <links/>
             <zoomscale>2000</zoomscale>
             <forcescale>true</forcescale>
         </layer>
@@ -424,23 +205,14 @@
                 <field name="ADDRESS" alias="Address" />
                 <field name="LFD_DIST" alias="Louiseville Fire District" />
             </fields>
-            <links>
-                <link includeinresults="false" field="" alias=""
-                    tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
+            <links/>
             <zoomscale>2000</zoomscale>
             <forcescale>true</forcescale>
         </layer>
         <layer>
             <name>Roads</name>
             <id>1</id>
-            <url>http://gislap183/arcgis/rest/services/Roads/MapServer</url>
+            <url>http://someserver/ArcGIS/rest/services/someservice/MapServer</url>
             <fields>
                 <field name="Road Name" />
                 <field name="Classification" />
@@ -458,15 +230,7 @@
                 <field name="Zip Code Left" />
                 <field name="Zip Code Right" />
             </fields>
-            <links>
-                <link includeinresults="false" field="" alias="" tooltip="">
-                    <linkprefix />
-                    <linksuffix />
-                    <iconfield />
-                    <iconprefix />
-                    <iconsuffix />
-                </link>
-            </links>
+            <links/>
             <zoomscale>12000</zoomscale>
             <forcescale>true</forcescale>
         </layer>
