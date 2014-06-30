@@ -234,8 +234,8 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.6.5";
-			protected const BUILDDATE:String = "3/1/2014";
+			protected const VERSION:String = "3.6.6";
+			protected const BUILDDATE:String = "6/30/2014";
 
 			//Resources
 			[Embed(source="assets/images/i_about.png")]

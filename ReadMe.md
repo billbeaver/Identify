@@ -7,6 +7,9 @@
 
 ## Version Updates
 
+* 3.6.6 - Fixed some issues with App Builder GUI not writing xml correctly (layer id and the links).
+        - App builder GUI now has a move to top and move to bottom for the fields list. 
+
 * 3.6.5 - Added some edit detection to the App Builder GUI so if you neglect to click save/update for a layer it will save for you.
         - Added Copy results to clipboard button,this will copy all the identify results to the system clipboard.
         - Added popuplinktype attribute to link so you can specify if the popup link will just be a text link or it will attempt to use
