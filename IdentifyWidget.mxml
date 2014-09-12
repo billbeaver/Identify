@@ -234,8 +234,8 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.6.6";
-			protected const BUILDDATE:String = "6/30/2014";
+			protected const VERSION:String = "3.6.7";
+			protected const BUILDDATE:String = "9/12/2014";
 
 			//Resources
 			[Embed(source="assets/images/i_about.png")]
@@ -313,6 +313,7 @@
 						var lyrLabel:String = lyrList[i].name;
 						var lyrURL:String = lyrList[i].url;
                         var lyrUseProxy:Boolean = lyrList[i].useproxy[0];
+                        var lId:int = lyrList[i].id
                         var lyrToken:String = "";
 						if(!lyrURL){
 							need2Warn = true;
@@ -323,6 +324,11 @@
                             var cred:Credential = IdentityManager.instance.findCredential(lyrURL);
                             if (cred && lyrToken == ""){
                                 lyrToken = cred.token;
+                            }else{
+                                cred = IdentityManager.instance.findCredential(lyrURL + "/" + lId);
+                                if (cred && lyrToken == ""){
+                                    lyrToken = cred.token;
+                                }
                             }
                         }
                         
@@ -330,6 +336,11 @@
                             var t:String = doesLayerExistinMapandHaveAToken(lyrURL)
                             if(t){
                                 lyrToken = t;
+                            }else{
+                                t = doesLayerExistinMapandHaveAToken(lyrURL+ "/" + lId);
+                                if(t){
+                                    lyrToken = t;
+                                }
                             }
                         }
                         

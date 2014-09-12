@@ -7,6 +7,8 @@
 
 ## Version Updates
 
+* 3.6.7 - Fixed bug with layer type="feature" not using the token specified in the main config.
+
 * 3.6.6 - Fixed some issues with App Builder GUI not writing xml correctly (layer id and the links).
         - App builder GUI now has a move to top and move to bottom for the fields list. 
 
