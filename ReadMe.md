@@ -7,6 +7,9 @@
 
 ## Version Updates
 
+* 3.6.8 - Fixed bug with links not appearing in results if there are multiple configured and the first one has a null or empty string value.
+        - Fixed selected tab indicator now working properly.
+        
 * 3.6.7 - Fixed bug with layer type="feature" not using the token specified in the main config.
 
 * 3.6.6 - Fixed some issues with App Builder GUI not writing xml correctly (layer id and the links).

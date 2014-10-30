@@ -35,9 +35,10 @@
 			
 			override public function set data(value:Object):void{
 				super.data = value;
-				if (data == null)
+				if (data == null){
 					return;
-
+                }
+                var showLinksGroup:Boolean = false;
 				if (value is IdResult) {
 					idResult = IdResult(value);
 					
@@ -61,13 +62,10 @@
                         //Do not add the icon if the link is empty
                         if(idResult.links[l].link !="" || idResult.links[l].link){
 						    linkGroup.addElement(lImg);
+                            showLinksGroup = true;
                         }
 					}
-					if(idResult.links[0]){
-						if(idResult.links[0].link){
-							linkGroup.includeInLayout = linkGroup.visible = true;
-						}
-					}
+					linkGroup.includeInLayout = linkGroup.visible = showLinksGroup;
 				}
 			}
 			

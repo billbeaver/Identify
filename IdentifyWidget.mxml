@@ -234,8 +234,8 @@
 			private var gf:flash.filters.GlowFilter;
 
 			//Build Constants
-			protected const VERSION:String = "3.6.7";
-			protected const BUILDDATE:String = "9/12/2014";
+			protected const VERSION:String = "3.6.8";
+			protected const BUILDDATE:String = "10/29/2014";
 
 			//Resources
 			[Embed(source="assets/images/i_about.png")]
@@ -249,6 +249,7 @@
 			private function init():void
 			{
 				if (configXML){
+                    wTemplate.selectedTitlebarButtonIndex = 1;
 					if (GeometryServiceSingleton.instance.url){ // using GeometryServiceSingleton
 						geometryService.url = GeometryServiceSingleton.instance.url;
 						geometryService.token = GeometryServiceSingleton.instance.token;
@@ -2332,13 +2333,13 @@
 			private function showStateIdentify():void
 			{
 				currentState = "StateIdentify";
-				wTemplate.selectedTitlebarButtonIndex = 0;
+				wTemplate.selectedTitlebarButtonIndex = 1;
 			}				
 
 			private function showStateResults():void
 			{
 				currentState = "resultsList";
-				wTemplate.selectedTitlebarButtonIndex = 1;
+				wTemplate.selectedTitlebarButtonIndex = 2;
 			}
 
 			private function hideInfoWindow():void
