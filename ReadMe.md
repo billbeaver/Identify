@@ -7,6 +7,9 @@
 
 ## Version Updates
 
+* 3.7 	- Recompiled for Flexviewer 3.7
+        - Added the ability to move searches up and down (promote and demote) in the App Builder GUI.
+
 * 3.6.8 - Fixed bug with links not appearing in results if there are multiple configured and the first one has a null or empty string value.
         - Fixed selected tab indicator now working properly.
         
